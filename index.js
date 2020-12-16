@@ -46,4 +46,4 @@ app.post("/upload",upload.single("music_file"),(req,res,next)=>{
   res.send(files);
 })
 
-app.listen("5923",()=>console.log("hey i am serving at port 5923"))
+app.listen(process.env.PORT || 3000, () => console.log("Server is running..."));
