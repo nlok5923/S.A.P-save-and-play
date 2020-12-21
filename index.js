@@ -6,13 +6,21 @@ const path = require("path")
 const fs = require('fs')
 const mongodb = require('mongodb')
 const ObjectId = require('mongodb').ObjectID;
+const mongoose = require('mongoose')
 const {Readable} = require('stream')
+const idModel =  require("./models/id.js/id")
 
 const MongoURI = 'mongodb+srv://creator:nnNN@@22@cluster0.bkrcv.mongodb.net/Images.Images'
 
-
-
 const MongoClient  = mongodb.MongoClient;
+
+mongoose.connect('mongodb+srv://creator:nnNN@@22@cluster0.bkrcv.mongodb.net/Images',{useNewUrlParser:true,useUnifiedTopology:true}).then(()=>{
+  console.log("connected")
+})
+.catch((err)=>{
+  console.log("not connected")
+})
+
 
 MongoClient.connect(MongoURI,{
   useNewUrlParser:true,
@@ -31,61 +39,30 @@ MongoClient.connect(MongoURI,{
 app.use(bodyParser.urlencoded({extended:true}))
 app.set("view engine","ejs")
 app.use(express.static('static'))
-
-// var storage = multer.diskStorage({
-//   destination:(req,file,cb)=> {
-//     cb(null,"./static/uploads");
-//   },
-//   filename:(req,file,cb) =>{
-//     console.log(req.body)
-//     cb(null,req.body.music_name+path.extname(file.originalname))
-//   }
-// })
-
-
-// var upload = multer({storage:storage})
+app.use(express.json());
 
 app.get("/", (req,res,next)=>{
   res.render("index")
 })
 
-// app.post("/upload",upload.single("music_file"),(req,res,next)=>{
-//   // const file = req.file;
-//   // if(!file){
-//   //   const err = new Error("upload file ")
-//   //   err.httpStatusCode = 400;
-//   //   return next(err);
-//   // }
- 
-//   // var files = fs.readdirSync(__dirname+ '/static/uploads');
-//   // //console.log(__dirname+'/static/uploads')
-//   // var fileNames = [];
-//  // console.log('../static/uploads'+files[0])
-//   // res.render("image",{ src:files[0]} ) 
-//   var img  =  fs.readFileSync(req.file.path)
-//   var encodeImg = img.toString('base64')
+app.get("/alltracks",async (req,res)=>{
 
-//   var finalImg = {
-//     contentType:req.file.mimetype,
-//     path:req.file.path,
-//     image: new Buffer(encodeImg,'base64')
-//   };
+ var arr = [];
+var obj = await idModel.find({}).then(async (doc)=>{
+      await doc.map((data,index)=>arr.push({id:data.track_id,name:data.name}));
+    //  arr.push(doc)
+      console.log(arr);
+  }).catch(err => console.log(err));
 
-//   db.collection('Images').insertOne(finalImg,(err,result)=>{
-//     console.log(result)
-//     if(err)
-//    return console.log(err)
-//    else
-// console.log("saved o db");
-// res.contentType(finalImg.contentType);
-// res.send(finalImg.image);
-// })
-
-// })
+var length  = arr.length;
+console.log(length)
+return res.render('list',{arr,length})
+})
 
 app.get("/track/:trackID",(req,res)=>{
   try{
     var trackID = new ObjectId(req.params.trackID)
+    console.log(req)
   }
   catch(err){
     return res.status(400).json({
@@ -113,11 +90,13 @@ app.get("/track/:trackID",(req,res)=>{
   downloadStream.on('end',()=>{
     res.end();
   })
+
 });
 
 app.post("/track",(req,res)=>{
+  var s_id;
   const storage = multer.memoryStorage()
-  const upload = multer({storage:multer.memoryStorage(),limits:{fields:1,fileSize:6000000,files:1,parts:2}});
+  const upload = multer({storage:multer.memoryStorage(),limits:{fields:1,fileSize:60000000,files:1,parts:2}});
   upload.single('track')(req,res,(err)=>{
     if(err){
       return res.status(400).json({message:"upload req fail"})
@@ -126,6 +105,7 @@ app.post("/track",(req,res)=>{
       console.log(req)
       return res.status(400).json({message:"no track name in req body"})
     }
+
     let trackName = req.body.music_name
 
     const readableTrackStream = new Readable();
@@ -138,6 +118,7 @@ app.post("/track",(req,res)=>{
 
     let uploadStream = bucket.openUploadStream(trackName);
     let id = uploadStream.id;
+    s_id = id;
     readableTrackStream.pipe(uploadStream);
 
     uploadStream.on('error',()=>{
@@ -145,7 +126,17 @@ app.post("/track",(req,res)=>{
     })
 
     uploadStream.on('finish',()=>{
-      return res.status(201).json({message:"file upload success stored under object id"+id})
+       
+      let  id_save = new idModel({
+        name:req.body.music_name,
+        track_id:id
+      })
+
+      id_save.save().then((doc)=>console.log(doc)).catch((err)=>console.log(err));
+
+      return (
+        res.render('image',{t_id:id})
+        )
     })
 
   })
