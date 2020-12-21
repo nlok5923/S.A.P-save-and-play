@@ -8,7 +8,8 @@ const mongodb = require('mongodb')
 const ObjectId = require('mongodb').ObjectID;
 const mongoose = require('mongoose')
 const {Readable} = require('stream')
-const idModel =  require("./models/id.js/id")
+const idModel =  require("./models/id")
+const detailModel = require("./models/signup")
 
 const MongoURI = 'mongodb+srv://creator:nnNN@@22@cluster0.bkrcv.mongodb.net/Images.Images'
 
@@ -41,9 +42,9 @@ app.set("view engine","ejs")
 app.use(express.static('static'))
 app.use(express.json());
 
-app.get("/", (req,res,next)=>{
-  res.render("index")
-})
+// app.get("/", (req,res,next)=>{
+//   res.render("index")
+// })
 
 app.get("/alltracks",async (req,res)=>{
 
@@ -141,6 +142,33 @@ app.post("/track",(req,res)=>{
 
   })
 
+})
+
+app.get("/signup",(req,res)=>{
+  res.render('signup')
+})
+
+app.get("/",(req,res)=>{
+  res.redirect('/signup')
+})
+app.post("/",async (req,res)=>{
+ var arr = [];
+  var obj = await detailModel.find({email:req.body.email,password:req.body.password}).then((doc)=>{(doc.length!=0)?res.render('index'):res.render('login')}).catch((err)=>console.log(err))
+//  console.log(arr.length)
+// (arr.length!=0)?res.render('index'):res.render('login')
+
+});
+app.get("/login",(req,res)=>{res.render('login')})
+app.post("/login",(req,res)=>{
+  let  user_detail = new detailModel({
+    first_name:req.body.fname,
+    last_name:req.body.lname,
+    email:req.body.usremail,
+    password:req.body.psw
+  })
+  console.log(req.body)
+  user_detail.save().then((doc)=>console.log(doc)).catch((err)=>console.log(err))
+  res.render('login')
 })
 
 app.listen(process.env.PORT || 3000, () => console.log("Server is running..."));
