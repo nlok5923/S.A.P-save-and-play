@@ -10,6 +10,9 @@ const mongoose = require('mongoose')
 const {Readable} = require('stream')
 const idModel =  require("./models/id")
 const detailModel = require("./models/signup")
+const axios = require('axios')
+
+var usrEmail = "";
 
 const MongoURI = 'mongodb+srv://creator:nnNN@@22@cluster0.bkrcv.mongodb.net/Images.Images'
 
@@ -42,19 +45,15 @@ app.set("view engine","ejs")
 app.use(express.static('static'))
 app.use(express.json());
 
-// app.get("/", (req,res,next)=>{
-//   res.render("index")
-// })
-
 app.get("/alltracks",async (req,res)=>{
 
- var arr = [];
-var obj = await idModel.find({}).then(async (doc)=>{
+var arr = [];
+var obj = await idModel.find({email:usrEmail}).then(async (doc)=>{
       await doc.map((data,index)=>arr.push({id:data.track_id,name:data.name}));
-    //  arr.push(doc)
       console.log(arr);
   }).catch(err => console.log(err));
-
+console.log(usrEmail);
+console.log(arr);
 var length  = arr.length;
 console.log(length)
 return res.render('list',{arr,length})
@@ -94,6 +93,18 @@ app.get("/track/:trackID",(req,res)=>{
 
 });
 
+app.get("/playall",(req,res)=>{
+    res.render('playall');
+    var arr = [];
+var obj = idModel.find({}).then(async (doc)=>{
+      await doc.map(async (data,index)=>{
+        const url = 'https://localhost:3000/track/data.track_id';
+        await axios.get(url)
+      });
+  }).catch(err => console.log(err));
+    
+})
+
 app.post("/track",(req,res)=>{
   var s_id;
   const storage = multer.memoryStorage()
@@ -130,7 +141,8 @@ app.post("/track",(req,res)=>{
        
       let  id_save = new idModel({
         name:req.body.music_name,
-        track_id:id
+        track_id:id,
+        email:usrEmail
       })
 
       id_save.save().then((doc)=>console.log(doc)).catch((err)=>console.log(err));
@@ -152,10 +164,9 @@ app.get("/",(req,res)=>{
   res.redirect('/signup')
 })
 app.post("/",async (req,res)=>{
- var arr = [];
-  var obj = await detailModel.find({email:req.body.email,password:req.body.password}).then((doc)=>{(doc.length!=0)?res.render('index'):res.render('login')}).catch((err)=>console.log(err))
-//  console.log(arr.length)
-// (arr.length!=0)?res.render('index'):res.render('login')
+usrEmail = await  req.body.email;
+console.log(usrEmail+"usr email")
+var obj1 = await detailModel.find({email:req.body.email,password:req.body.password}).then((doc)=>{(doc.length!=0)?res.render('index'):res.render('login')}).catch((err)=>console.log(err))
 
 });
 app.get("/login",(req,res)=>{res.render('login')})

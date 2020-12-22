@@ -1,33 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
     <title>Classify Music</title>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
-       
-        <h1 class="text-white text-center">Music Classifier </h1>
-      </nav>
-      <div class="container mt-5">
+  </head>
+  <body>
+      <h1 class="text-center  mt-5">Save and play</h1>
+    <div class="container">
       <form enctype="multipart/form-data" method="post" action="/track">
-        
-        <div class="form-group"  >
+        <div class="form-group">
           <label for="music_name">Music Name</label>
-          <input type="text" class="form-control" name="music_name" aria-describedby="music" placeholder="Enter music name" >
+          <input
+            type="text"
+            class="form-control"
+            name="music_name"
+            aria-describedby="music"
+            placeholder="Enter music name"
+          />
         </div>
         <br />
         <div class="form-group">
           <label for="Music_file">Choose file</label>
-          <input type="file" class="form-control" id="Music_file" placeholder="Choose file" name="track">
+          <input
+            type="file"
+            class="form-control"
+            id="Music_file"
+            placeholder="Choose file"
+            name="track"
+          />
         </div>
-
         <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        <h3>Or</h3>
+        <a href="/alltracks" class="btn btn-primary ml-5"> All tracks </a>
       </form>
-
-      <h1 class="text-center mt-5"> Classified as Pop genres</h1>
-      </div>
-</body>
+  
+    </div>
+   
+  </body>
 </html>

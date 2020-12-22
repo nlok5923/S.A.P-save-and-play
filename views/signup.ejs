@@ -8,14 +8,27 @@
 </head>
 <body>
 
+   <div class="container mt-5">
+       <h1 class="text-center">Welcome to Save and play</h1>
     <form method="POST" action="/login">
+        <label  class="sr-only" >First name</label>
     <input type="first name" class="form-control" placeholder="first name" name="fname" required>
+    <label  class="sr-only" >Last name</label>
     <input type="last name" class="form-control" placeholder="lastname"  name="lname" required>
+    <label  class="sr-only" >Email</label>
     <input type="email" class="form-control" placeholder="enter email" name="usremail" required>
-    <input type="password" class="form-control" placeholder="Enter password" name="psw" required> 
-    <input type="password" class="form-control" placeholder="Re enter password" name="repsw" required">
-    <button type="submit">Submit</button>
+    <label  class="sr-only" >Password</label>
+    <input type="password" class="form-control" placeholder="Enter password" name="psw" required>
+    <label class="sr-only" >Re-enter password</label> 
+    <input type="password" class="form-control" placeholder="Re enter password" name="repsw" required>
+    <div class="text-center">
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
     </form>
+    <h4>Already has account</h4>
+    <a href="/login" class="btn btn-primary ">Go to login</a></div>
+    </div>
+
+  
     
 </body>
 </html>

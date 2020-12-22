@@ -7,13 +7,16 @@
     <title>playlist</title>
 </head>
 <body> 
- 
-        <!-- <h1><%= length %></h1> -->
-
+    <h3 class="text-center mt-5">Tap the button next correspoding to your song to play it</h3>
+    <div class="container text-center">
+        <% if(length == 0){ %> 
+        <h4>Bro add some songs yaar</h1>
+            <%} else {%>
         <% arr.map((data)=>{ %>
         <form method="GET" action="/track/<%= data.id %> ">
-        <button type="submit" class="btn btn-success m-5">play <%= data.name %></button>
+        <button type="submit" class="btn btn-primary mt-3">play <%= data.name %></button>
         </form>
-         <% }) %>
+         <% }) }%>
+    </div>
  </body>
 </html>
