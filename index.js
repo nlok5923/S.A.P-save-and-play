@@ -35,6 +35,7 @@ MongoClient.connect(MongoURI,{
       console.log(err+ "aagayi bhai")
   }else
   { 
+    console.log("yoyo")
       db = client.db('Images');
       app.listen(4000,()=>console.log("mongo server listen at 4000"))
   }
@@ -48,7 +49,7 @@ app.use(express.json());
 app.get("/alltracks",async (req,res)=>{
 
 var arr = [];
-var obj = await idModel.find({email:usrEmail}).then(async (doc)=>{
+var obj = await idModel.find().then(async (doc)=>{
       await doc.map((data,index)=>arr.push({id:data.track_id,name:data.name}));
       console.log(arr);
   }).catch(err => console.log(err));
@@ -160,13 +161,14 @@ app.get("/signup",(req,res)=>{
   res.render('signup')
 })
 
-app.get("/",(req,res)=>{
-  res.redirect('/signup')
-})
-app.post("/",async (req,res)=>{
-usrEmail = await  req.body.email;
-console.log(usrEmail+"usr email")
-var obj1 = await detailModel.find({email:req.body.email,password:req.body.password}).then((doc)=>{(doc.length!=0)?res.render('index'):res.render('login')}).catch((err)=>console.log(err))
+// app.get("/",(req,res)=>{
+//   res.redirect('/signup')
+// })
+app.get("/",async (req,res)=>{
+// usrEmail = await req.body.email;
+// console.log(usrEmail+"usr email")
+res.render('index')
+// var obj1 = await detailModel.find({email:req.body.email,password:req.body.password}).then((doc)=>{(doc.length!=0)?res.render('index'):res.render('login')}).catch((err)=>console.log(err))
 
 });
 app.get("/login",(req,res)=>{res.render('login')})
@@ -182,4 +184,4 @@ app.post("/login",(req,res)=>{
   res.render('login')
 })
 
-app.listen(process.env.PORT || 3000, () => console.log("Server is running..."));
+app.listen(process.env.PORT || 5000, () => console.log("Server is running..."));
